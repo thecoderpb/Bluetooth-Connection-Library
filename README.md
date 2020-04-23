@@ -63,10 +63,28 @@ public interface OnBluetoothConnect {
     void onReceive(String message);
 }
 ```
+<h2>Message Service Class</h2>
+<p>Once the device obtains the socket, it opens connection through the socket and this class helps in sending data to the remote device</p>
+<p><b>NOTE:</b>Do NOT instantiate the class and directly send message using the sendMessage() method. Use the service obtained from interface call onRecieve. (Refer Sample Code Block)</p>
+
+```java
+BluetoothMessageService service;
+...
+@Override
+public void connectedStream(BluetoothMessageService service) {
+        this.service = service;
+		//OR
+	service.sendMessage("Message"); //Sends data to target device
+    }
+ //your method where you can call service.sendMessage("Message");
+```
+	
 <h2>Static Calls</h2>
+
 ```java
 BluetoothConnectionManager.getDeviceStatus() //retrives device status as client or server
 ```
+
 Default return value is -1
 
 <b>FLAGS</b>
