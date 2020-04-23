@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements OnBluetoothConnec
 }
 ```
 
-<h2>NOTICE</h2>
+<h2>LICENSE</h2>
 
 ```
 Copyright (c) 2020 thecoderpb
