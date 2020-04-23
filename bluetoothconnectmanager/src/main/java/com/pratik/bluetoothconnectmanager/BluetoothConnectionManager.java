@@ -14,16 +14,22 @@ import java.util.List;
 
 public class BluetoothConnectionManager implements OnConnectionAcceptedListener, OnConnectionInitiateListener {
 
-    private Context mContext;
-    private BluetoothAdapter mAdapter = null;
+    public static final int CLIENT = 0;
+    public static final int SERVER = 1;
+    private static int STATUS = -1;
+
+    private BluetoothAdapter mAdapter;
     private BluetoothSocket mSocket = null;
     private ConnectThread cThread = null;
     private AcceptThread aThread = null;
 
-    public static final String TAG = "com.pratik.btlibrarY";
+    static final String TAG = "com.pratik.btlibrarY";
+
+    public static int getDeviceStatus(){
+        return STATUS;
+    }
 
     public BluetoothConnectionManager(Context mContext, BluetoothAdapter adapter) {
-        this.mContext = mContext;
         mAdapter = adapter;
     }
 
@@ -76,7 +82,7 @@ public class BluetoothConnectionManager implements OnConnectionAcceptedListener,
 
     }
 
-    public void connect(@NonNull BluetoothSocket socket, @NonNull OnBluetoothConnect listener) {
+    public void connect(@NonNull BluetoothSocket socket,@NonNull OnBluetoothConnect listener) {
         mSocket = socket;
         BluetoothMessageService service = new BluetoothMessageService();
         service.connectService(socket,listener);
@@ -128,21 +134,25 @@ public class BluetoothConnectionManager implements OnConnectionAcceptedListener,
 
     @Override
     public void OnBluetoothServerAccept(@NonNull BluetoothSocket socket, @NonNull OnBluetoothConnect listener) {
+        Log.i(TAG,"server connected");
+        STATUS = 1;
         mSocket = socket;
-        if (aThread.isAlive())
-            aThread.cancel();
         BluetoothMessageService service = new BluetoothMessageService();
         service.connectService(socket,listener);
+        listener.connectedStream(service);
+
 
     }
 
 
     @Override
     public void OnBluetoothClientConnect(@NonNull BluetoothSocket socket, @NonNull OnBluetoothConnect listener) {
+        Log.i(TAG,"client connected");
+        STATUS = 0;
         mSocket = socket;
-        if (cThread.isAlive())
-            cThread.cancel();
         BluetoothMessageService service = new BluetoothMessageService();
         service.connectService(socket,listener);
+        listener.connectedStream(service);
+
     }
 }
