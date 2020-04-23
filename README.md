@@ -3,7 +3,7 @@
 A library to manage connection between two devices using bluetooth
 
 <h2>Add the dependencies to your gradle</h2>
-<b>Step 1.</b> Add the JitPack repository to your root build file
+<b>Step 1.</b> Add the JitPack repository to your root build file.
 
 ```gradle
 allprojects {
@@ -13,13 +13,13 @@ allprojects {
 		}
 	} 
 ```
-<b>Step 2</b>. Add the dependency to your app level gradle build file
+<b>Step 2</b>. Add the dependency to your app level gradle build file.
 ```gradle
 dependencies {
 	        implementation 'com.github.thecoderpb:Bluetooth-Connection-Library:<version>'
 	}
 ```
-<strong>Current \<version\> is <i>1.2.0</i></strong>
+<strong>Current \<version\> is <i>1.2.1</i></strong>
 
 <h2>Usage</h2>
 Create an instance of the class BluetoothConnectionManager.
@@ -37,6 +37,12 @@ BluetoothConnectionManager btConnManger = new BluetoothConnectionManager(Context
 4. getSocket()                   |              returns connected BluetoothSocket
 5. disconnect()                  |              closes connection
 ```
+<h4>The accept method</h4>
+<p>Setup a server to listen for communications</p>
+
+```java
+initConnectionAccept(OnBluetoothConnect listener)
+```
 
 <h4>The connect method</h4>
 <p>Establish communication with server</p>
@@ -47,12 +53,7 @@ BluetoothConnectionManager btConnManger = new BluetoothConnectionManager(Context
 3. connect(byte[] byteAddress, OnBluetoothConnect listener )
 4. connect(BluetoothSocket socket, OnBluetoothConnect listener )
 ```
-<h4>The accept method</h4>
-<p>Setup a server to listen for communications</p>
 
-```java
-initConnectionAccept(OnBluetoothConnect listener)
-```
 <h2>Interface Methods</h2>
 
 ```java
