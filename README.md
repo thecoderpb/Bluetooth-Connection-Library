@@ -19,7 +19,7 @@ dependencies {
 	        implementation 'com.github.thecoderpb:Bluetooth-Connection-Library:<version>'
 	}
 ```
-<strong>Current \<version\> is 1.2.0</strong>
+<strong>Current \<version\> is <i>1.2.0</i></strong>
 
 <h2>Usage</h2>
 Create an instance of the class BluetoothConnectionManager.
@@ -76,13 +76,12 @@ public void connectedStream(BluetoothMessageService service) {
 		//OR
 	service.sendMessage("Message"); //Sends data to target device
     }
- //your method where you can call service.sendMessage("Message");
 ```
 	
 <h2>Static Calls</h2>
 
 ```java
-BluetoothConnectionManager.getDeviceStatus() //retrives device status as client or server
+BluetoothConnectionManager.getDeviceStatus(); //retrives device status as client or server
 ```
 
 Default return value is -1
@@ -142,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements OnBluetoothConnec
 <h2>NOTICE</h2>
 
 ```
+Copyright (c) 2020 thecoderpb
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
