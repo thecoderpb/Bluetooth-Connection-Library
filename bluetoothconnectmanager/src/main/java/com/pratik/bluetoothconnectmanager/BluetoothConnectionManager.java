@@ -35,7 +35,7 @@ import java.util.List;
     git push origin 1.1
 */
 
-public class BluetoothConnectionManager implements OnConnectionAcceptedListener, OnConnectionInitiateListener {
+public class BluetoothConnectionManager {
 
     public static final int CLIENT = 0;
     public static final int SERVER = 1;
@@ -66,7 +66,17 @@ public class BluetoothConnectionManager implements OnConnectionAcceptedListener,
 
     public void initConnectionAccept(OnBluetoothConnect listener) {
 
-        aThread = new AcceptThread(getAdapter(), this, listener);
+        aThread = new AcceptThread(getAdapter(), new OnConnectionAcceptedListener() {
+            @Override
+            public void OnBluetoothServerAccept(@NonNull BluetoothSocket socket, @NonNull OnBluetoothConnect listener) {
+                Log.i(TAG,"server connected");
+                STATUS = 1;
+                mSocket = socket;
+                BluetoothMessageService service = new BluetoothMessageService();
+                service.connectService(socket,listener);
+                listener.connectedStream(service);
+            }
+        }, listener);
         aThread.start();
 
     }
@@ -116,7 +126,17 @@ public class BluetoothConnectionManager implements OnConnectionAcceptedListener,
 
     private void getConnectionSocket(@NonNull BluetoothDevice device, @NonNull OnBluetoothConnect listener) {
 
-        cThread = new ConnectThread(device, mAdapter, this, listener);
+        cThread = new ConnectThread(device, mAdapter, new OnConnectionInitiateListener() {
+            @Override
+            public void OnBluetoothClientConnect(@NonNull BluetoothSocket socket, @NonNull OnBluetoothConnect listener) {
+                Log.i(TAG,"client connected");
+                STATUS = 0;
+                mSocket = socket;
+                BluetoothMessageService service = new BluetoothMessageService();
+                service.connectService(socket,listener);
+                listener.connectedStream(service);
+            }
+        }, listener);
         cThread.start();
 
     }
@@ -155,27 +175,4 @@ public class BluetoothConnectionManager implements OnConnectionAcceptedListener,
     }
 
 
-    @Override
-    public void OnBluetoothServerAccept(@NonNull BluetoothSocket socket, @NonNull OnBluetoothConnect listener) {
-        Log.i(TAG,"server connected");
-        STATUS = 1;
-        mSocket = socket;
-        BluetoothMessageService service = new BluetoothMessageService();
-        service.connectService(socket,listener);
-        listener.connectedStream(service);
-
-
-    }
-
-
-    @Override
-    public void OnBluetoothClientConnect(@NonNull BluetoothSocket socket, @NonNull OnBluetoothConnect listener) {
-        Log.i(TAG,"client connected");
-        STATUS = 0;
-        mSocket = socket;
-        BluetoothMessageService service = new BluetoothMessageService();
-        service.connectService(socket,listener);
-        listener.connectedStream(service);
-
-    }
 }
