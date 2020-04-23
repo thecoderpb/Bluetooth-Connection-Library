@@ -1,4 +1,4 @@
-# Bluetooth-Connection-Library
+# Bluetooth-Connection-Library [![](https://jitpack.io/v/thecoderpb/Bluetooth-Connection-Library.svg)](https://jitpack.io/#thecoderpb/Bluetooth-Connection-Library)
 
 A library to manage connection between two devices using bluetooth
 
