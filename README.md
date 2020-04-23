@@ -3,9 +3,9 @@
 A library to manage connection between two devices using bluetooth
 
 <h2>Add the dependencies to your gradle</h2>
-<b>Step 1.</b> Add the JitPack repository to your build file
+<b>Step 1.</b> Add the JitPack repository to your root build file
 
-```
+```gradle
 allprojects {
 		repositories {
 			...
@@ -13,18 +13,18 @@ allprojects {
 		}
 	} 
 ```
-<b>Step 2</b>. Add the dependency
-```
+<b>Step 2</b>. Add the dependency to your app level gradle build file
+```gradle
 dependencies {
 	        implementation 'com.github.thecoderpb:Bluetooth-Connection-Library:<version>'
 	}
 ```
-Current \<version\> is 1.0
+<strong>Current \<version\> is 1.2.0</strong>
 
 <h2>Usage</h2>
 Create an instance of the class BluetoothConnectionManager.
 
-```
+```java
 BluetoothConnectionManager btConnManger = new BluetoothConnectionManager(Context context,BluetoothAdapter adapter)
 ```
 
@@ -41,26 +41,83 @@ BluetoothConnectionManager btConnManger = new BluetoothConnectionManager(Context
 <h4>The connect method</h4>
 <p>Establish communication with server</p>
 
-```
-1. connect(Bluetooth device, OnBluetoothConnect listener )<br>
-2. connect(String deviceAddress, OnBluetoothConnect listener)<br>
-3. connect(byte[] byteAddress, OnBluetoothConnect listener )<br>
-4. connect(BluetoothSocket socket, OnBluetoothConnect listener )<br>
+```java
+1. connect(Bluetooth device, OnBluetoothConnect listener )
+2. connect(String deviceAddress, OnBluetoothConnect listener)
+3. connect(byte[] byteAddress, OnBluetoothConnect listener )
+4. connect(BluetoothSocket socket, OnBluetoothConnect listener )
 ```
 <h4>The accept method</h4>
 <p>Setup a server to listen for communications</p>
 
-```
+```java
 initConnectionAccept(OnBluetoothConnect listener)
 ```
 <h2>Interface Methods</h2>
 
-```
+```java
 public interface OnBluetoothConnect {
 
     void connectedStream(BluetoothMessageService service);
 
     void onReceive(String message);
+}
+```
+<h2>Static Calls</h2>
+```java
+BluetoothConnectionManager.getDeviceStatus() //retrives device status as client or server
+```
+Default return value is -1
+
+<b>FLAGS</b>
+```java
+BluetoothConnectionManager.CLIENT // 0
+BluetoothConnectionManager.SERVER // 1
+```
+
+<h2>Sample Code</h2>
+
+```java
+public class MainActivity extends AppCompatActivity implements OnBluetoothConnect, View.OnClickListener {
+
+    BluetoothConnectionManager btManager;
+    BluetoothMessageService service;
+    
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        btManager = new BluetoothConnectionManager(this, BluetoothAdapter.getDefaultAdapter());
+	Button button = findViewById(R.id.button);
+	button.setOnClickListener(this);
+        if (btManager.isEnabled())
+            btManager.initConnectionAccept(this);
+        else Log.i(TAG, "Enable bt");
+        for (BluetoothDevice device : btManager.getPairedDevices()) {
+            Log.i(TAG, device.getAddress() + " " + device.getName());
+            if (device.getAddress().equals("0C:E0:DC:2E:80:53")) //Enter your device address
+                btManager.connect(device, this);
+        }
+
+    }
+
+    @Override
+    public void connectedStream(BluetoothMessageService service) {
+        this.service = service; // get the message service
+    }
+
+    @Override
+    public void onReceive(String message) {
+        Log.i(TAG, "message sent from device " + message);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(BluetoothConnectionManager.getDeviceStatus() == BluetoothConnectionManager.CLIENT) //only client will be able to send message
+        	service.sendMessage(msg);
+    }
 }
 ```
 
