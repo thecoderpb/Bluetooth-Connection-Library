@@ -31,11 +31,11 @@ BluetoothConnectionManager btConnManger = new BluetoothConnectionManager(Context
 <h2>Class Methods</h2>
 
 ```
-* getAdapter()                  |              returns bluetoothAdapter
-* isEnabled()                   |              returns a boolean checking if BT is enabled or not
-* getPairedDevices()            |              returns a list of bonded BT devices List<BluetoothDevice>
-* getSocket()                   |              returns connected BluetoothSocket
-* disconnect()                  |              closes connection
+1. getAdapter()                  |              returns bluetoothAdapter
+2. isEnabled()                   |              returns a boolean checking if BT is enabled or not
+3. getPairedDevices()            |              returns a list of bonded BT devices List<BluetoothDevice>
+4. getSocket()                   |              returns connected BluetoothSocket
+5. disconnect()                  |              closes connection
 ```
 
 <h4>The connect method</h4>
@@ -65,7 +65,7 @@ public interface OnBluetoothConnect {
 ```
 <h2>Message Service Class</h2>
 <p>Once the device obtains the socket, it opens connection through the socket and this class helps in sending data to the remote device</p>
-<p><b>NOTE:</b>Do NOT instantiate the class and directly send message using the sendMessage() method. Use the service obtained from interface call onRecieve. (Refer Sample Code Block)</p>
+<p><b>NOTE:</b> Do NOT instantiate the class and directly send message using the sendMessage() method. Use the service obtained from interface call onRecieve. (Refer Sample Code Block)</p>
 
 ```java
 BluetoothMessageService service;
