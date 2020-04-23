@@ -63,3 +63,5 @@ public interface OnBluetoothConnect {
     void onReceive(String message);
 }
 ```
+
+<h2>NOTICE</h2>
