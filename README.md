@@ -19,7 +19,7 @@ dependencies {
 	        implementation 'com.github.thecoderpb:Bluetooth-Connection-Library:<version>'
 	}
 ```
-<strong>Current \<version\> is <i>1.2.1</i></strong>
+<strong>Current \<version\> is <i>1.2.2</i></strong>
 
 <h2>Usage</h2>
 Create an instance of the class BluetoothConnectionManager.
@@ -61,12 +61,14 @@ public interface OnBluetoothConnect {
 
     void connectedStream(BluetoothMessageService service);
 
-    void onReceive(String message);
+    void onReceive(String message,Object object);
 }
 ```
 <h2>Message Service Class</h2>
 <p>Once the device obtains the socket, it opens connection through the socket and this class helps in sending data to the remote device</p>
 <p><b>NOTE:</b> Do NOT instantiate the class and directly send message using the sendMessage() method. Use the service obtained from interface call onRecieve. (Refer Sample Code Block)</p>
+
+<h3>Implementation</h3>
 
 ```java
 BluetoothMessageService service;
@@ -77,12 +79,27 @@ public void connectedStream(BluetoothMessageService service) {
 		//OR
 	service.sendMessage("Message"); //Sends data to target device
     }
+    
+@Override
+public void onReceive(String message,Object object){
+    if(message != null) //check for null safety 
+        textview.setText(message);
+    //If message is sent as a string, onReceive will have the message as String as well as object
+    //If message is sent as an object, onReceive will have the message as only object and String message will be null
+}
+```
+
+<h3>Class Methods</h3>
+
+```
+1. sendMessage(String message); 
+2. sendMessage(Object object); //Object must be serializable,else the method silently fails
 ```
 	
 <h2>Static Calls</h2>
 
 ```java
-BluetoothConnectionManager.getDeviceStatus(); //retrives device status as client or server
+BluetoothConnectionManager.getDeviceStatus(); //retrieves device status as client or server
 ```
 
 Default return value is -1
@@ -93,11 +110,14 @@ BluetoothConnectionManager.CLIENT // 0
 BluetoothConnectionManager.SERVER // 1
 ```
 
+All <b>connect()</b> and <b>sendMessage()</b> methods silently fails if parameters sent are incorrect/cannot be parsed.
+
 <h2>Sample Code</h2>
 
 ```java
 public class MainActivity extends AppCompatActivity implements OnBluetoothConnect, View.OnClickListener {
 
+    // A basic chat app
     BluetoothConnectionManager btManager;
     BluetoothMessageService service;
     
@@ -127,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements OnBluetoothConnec
     }
 
     @Override
-    public void onReceive(String message) {
+    public void onReceive(String message,Object object) {
         Log.i(TAG, "message sent from device " + message);
     }
 

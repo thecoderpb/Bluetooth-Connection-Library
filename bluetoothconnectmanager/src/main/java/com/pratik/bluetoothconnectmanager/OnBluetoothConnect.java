@@ -4,6 +4,8 @@ package com.pratik.bluetoothconnectmanager;
  * Created by thecoderpb on 24/04/20.
  */
 
+import androidx.annotation.Nullable;
+
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +22,7 @@ package com.pratik.bluetoothconnectmanager;
 
 public interface OnBluetoothConnect {
 
-    void connectedStream(BluetoothMessageService service);
+    void connectedStream( BluetoothMessageService service);
 
     void onReceive(String message);
 

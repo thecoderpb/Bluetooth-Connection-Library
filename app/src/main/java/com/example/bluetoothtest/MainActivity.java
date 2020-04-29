@@ -45,10 +45,6 @@ public class MainActivity extends AppCompatActivity implements OnBluetoothConnec
 
     }
 
-    @Override
-    public void connectedStream(BluetoothMessageService service) {
-        this.service = service;
-    }
 
     @Override
     public void onReceive(String message) {
