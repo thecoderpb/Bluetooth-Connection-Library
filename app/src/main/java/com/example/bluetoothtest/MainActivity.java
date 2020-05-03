@@ -47,14 +47,28 @@ public class MainActivity extends AppCompatActivity implements OnBluetoothConnec
 
 
     @Override
-    public void onReceive(String message) {
-        textView.setText(message);
-        Log.i("asdf", "message sent from client " + message);
+    public void connectedStream(BluetoothMessageService service) {
+        this.service = service;
+        //service.sendMessage("hi");
+    }
+
+    @Override
+    public void onReceive(String message,Object object) {
+        if(message.equals("")){
+            textView.setText(object.toString());
+            Log.i("asdf","msg is an object");
+        }else{
+            textView.setText(message);
+            Log.i("asdf","msg is a string");
+        }
+
+
+        Log.i("asdf", "message sent from remote device " + message);
     }
 
     @Override
     public void onClick(View v) {
-        String msg = editText.getText().toString();
-        service.sendMessage(msg);
+        Object obj = editText.getText().toString();
+        service.sendMessage(obj);
     }
 }

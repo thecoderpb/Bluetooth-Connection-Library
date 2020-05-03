@@ -8,10 +8,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-
 
 import static com.pratik.bluetoothconnectmanager.BluetoothConnectionManager.TAG;
 
@@ -38,11 +39,14 @@ public class BluetoothMessageService {
     private ConnectedThread thread;
     private Handler handler;
     private final int MSG = 1;
+    static int CONNECTION_OPEN = 0;
+    private boolean OBJ_FLAG = false;
 
     void connectService(BluetoothSocket socket,OnBluetoothConnect listener) {
 
         thread = new ConnectedThread(socket,listener);
         thread.start();
+        listener.connectedStream(this);
     }
 
     private void readMessage(final OnBluetoothConnect mListener){
@@ -50,21 +54,56 @@ public class BluetoothMessageService {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 if(msg.what == MSG){
-                    String message = new String((byte[]) msg.obj);
-                    String[] split = message.split("\0");
-                    Log.i(TAG,"msg " + split[0]);
-                    mListener.onReceive(split[0]);
+                    if(OBJ_FLAG){
+                        mListener.onReceive("",msg.obj);
+                    }else {
+                        String message = new String((byte[]) msg.obj);
+                        String[] split = message.split("\0");
+                        Log.i(TAG,"msg " + split[0]);
+                        Object obj = split[0];
+                        mListener.onReceive(split[0],obj);
+                    }
+
                 }
             }
         };
     }
 
-    public void sendMessage(String message) {
+    public void sendMessage(@NonNull String message) {
 
         message += "\0";
         byte[] msg = message.getBytes();
-        thread.write(msg, message);
+        if(CONNECTION_OPEN == 1){
+            OBJ_FLAG = false;
+            thread.write(msg);
+        }
 
+
+    }
+
+    public void sendMessage(@NonNull Object object){
+
+        // Sent object must be serializable
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out = null;
+        try {
+            out = new ObjectOutputStream(bos);
+            out.writeObject(object);
+            out.flush();
+            byte[] msg = bos.toByteArray();
+            if(CONNECTION_OPEN == 1){
+                OBJ_FLAG = true;
+                thread.write(msg);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                bos.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
 
@@ -85,11 +124,13 @@ public class BluetoothMessageService {
 
             try {
                 tmpIn = socket.getInputStream();
+                CONNECTION_OPEN = 1;
             } catch (IOException e) {
                 Log.e(TAG, "Error occurred when creating input stream", e);
             }
             try {
                 tmpOut = socket.getOutputStream();
+                CONNECTION_OPEN = 1;
             } catch (IOException e) {
                 Log.e(TAG, "Error occurred when creating output stream", e);
             }
@@ -122,7 +163,7 @@ public class BluetoothMessageService {
         }
 
         // Call this from the main activity to send data to the remote device.
-        void write(byte[] bytes, String msg) {
+        void write(byte[] bytes) {
             try {
                 mmOutStream.write(bytes);
 
@@ -141,6 +182,7 @@ public class BluetoothMessageService {
         public void cancel() {
             try {
                 mmSocket.close();
+                CONNECTION_OPEN = 0;
             } catch (IOException e) {
                 Log.e(TAG, "Could not close the connect socket", e);
             }

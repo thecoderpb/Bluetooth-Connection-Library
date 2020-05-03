@@ -74,7 +74,7 @@ public class BluetoothConnectionManager {
                 mSocket = socket;
                 BluetoothMessageService service = new BluetoothMessageService();
                 service.connectService(socket,listener);
-                listener.connectedStream(service);
+                //listener.connectedStream(service);
             }
         }, listener);
         aThread.start();
@@ -134,7 +134,7 @@ public class BluetoothConnectionManager {
                 mSocket = socket;
                 BluetoothMessageService service = new BluetoothMessageService();
                 service.connectService(socket,listener);
-                listener.connectedStream(service);
+                //listener.connectedStream(service);
             }
         }, listener);
         cThread.start();
