@@ -19,7 +19,7 @@ dependencies {
 	        implementation 'com.github.thecoderpb:Bluetooth-Connection-Library:<version>'
 	}
 ```
-<strong>Current \<version\> is <i>1.2.2</i></strong>
+<strong>Current \<version\> is <i>1.2.3</i></strong>
 
 <h2>Usage</h2>
 Create an instance of the class BluetoothConnectionManager.
